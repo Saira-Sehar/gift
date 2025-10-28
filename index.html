@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Ya Husna Ya Omri — A Gift</title>
+    <style>
+        :root {
+            --accent-start: #ff9a9e;
+            --accent-mid: #fecfef;
+            --accent-end: #f6d365;
+            --font-sans: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: var(--font-sans);
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .wrap {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden
+        }
+
+        .bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.7) saturate(1.1);
+            transition: opacity 1500ms ease;
+            z-index: 0;
+        }
+
+        .overlay-filter {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.6));
+            z-index: 1;
+        }
+
+        .stage {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .centerBox {
+            text-align: center;
+            max-width: 900px
+        }
+
+        .title {
+            font-size: clamp(28px, 6vw, 64px);
+            margin: 0 0 12px;
+            text-shadow: 0 12px 30px rgba(0, 0, 0, 0.6)
+        }
+
+        .subtitle {
+            opacity: 0.95;
+            margin: 0 0 18px;
+            font-size: clamp(16px, 2.2vw, 20px)
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent-start), var(--accent-mid) 50%, var(--accent-end));
+            border: none;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+            color: #1a0312
+        }
+
+        .scene {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh
+        }
+
+        .scene.show {
+            display: flex
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(6px);
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .fadeIn {
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 1s ease, transform 1s ease
+        }
+
+        .fadeIn.show {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .word {
+            opacity: 0;
+            display: inline-block;
+            transition: opacity 1s ease
+        }
+
+        .word.show {
+            opacity: 1
+        }
+
+        .poem-line {
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            font-size: clamp(18px, 2.2vw, 26px);
+            margin: 12px 0;
+        }
+
+        .download-btn {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a0312;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25)
+        }
+
+        canvas#effectsCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* 🔈 Themed Unmute Button */
+        #unmuteBtn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            color: #1a0312;
+            padding: 12px 22px;
+            font-weight: 700;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(255, 170, 170, 0.5);
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        #unmuteBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255, 200, 200, 0.8);
+        }
+
+        #unmuteBtn::before {
+            content: "🎵 ";
+        }
+    </style>
+</head>
+
+<body>
+    <button id="unmuteBtn">Enable Audio</button>
+    <canvas id="effectsCanvas"></canvas>
+
+    <div class="wrap">
+        <div id="bg1" class="bg" style="background-image:url('background1.jpg');opacity:1"></div>
+        <div id="bg2" class="bg" style="background-image:url('background2.jpg');opacity:0"></div>
+        <div class="overlay-filter"></div>
+
+        <main class="stage" id="stage">
+            <!-- Intro Scene -->
+            <section id="sceneIntro" class="scene show">
+                <div class="centerBox card">
+                    <h1 class="title">Ya Husna Ya Omri✨♥  (shana )</h1>
+                    <p class="subtitle">A special gift made with love😎🙈</p>
+                    <button id="startBtn" class="btn">Start Gift 🎁</button>
+                </div>
+            </section>
+
+            <!-- Birthday Scene -->
+            <section id="sceneBirthday" class="scene">
+                <div class="centerBox card" id="birthdayCard">
+                    <p id="birthdayText"></p>
+                </div>
+            </section>
+
+            <!-- Poetic Scene -->
+            <section id="scenePoem" class="scene">
+                <div class="centerBox card" id="poemCard"></div>
+            </section>
+
+            <!-- Ending Scene -->
+            <section id="sceneEnd" class="scene">
+                <div class="centerBox card">
+                    <h2>With all my love☺️🫀</h2>
+                    <a id="downloadBtn" class="download-btn" href="#">🎁 Download Gift / 🔄 Replay</a>
+                </div>
+            </section>
+        </main>
+
+        <audio id="audioSong1" src="song1.mp3" preload="auto"></audio>
+        <audio id="audioSong2" src="song2.mp3" preload="auto" loop></audio>
+    </div>
+
+    <script>
+        const bg1 = document.getElementById("bg1"),
+            bg2 = document.getElementById("bg2"),
+            sceneIntro = document.getElementById("sceneIntro"),
+            sceneBirthday = document.getElementById("sceneBirthday"),
+            scenePoem = document.getElementById("scenePoem"),
+            sceneEnd = document.getElementById("sceneEnd"),
+            startBtn = document.getElementById("startBtn"),
+            downloadBtn = document.getElementById("downloadBtn"),
+            audio1 = document.getElementById("audioSong1"),
+            audio2 = document.getElementById("audioSong2"),
+            unmuteBtn = document.getElementById("unmuteBtn"),
+            poemCard = document.getElementById("poemCard");
+
+        audio1.currentTime = 23;
+        audio2.currentTime = 23;
+        audio1.volume = 0.9;
+        audio2.volume = 1.0;
+        audio2.loop = true;
+
+        // Sparkles + hearts animation
+        const canvas = document.getElementById('effectsCanvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, particles = [];
+        function resize() { w = canvas.width = innerWidth; h = canvas.height = innerHeight }
+        window.addEventListener('resize', resize); resize();
+        function createParticle() {
+            const heart = Math.random() < .3;
+            return {
+                x: Math.random() * w, y: Math.random() * h,
+                size: heart ? (10 + Math.random() * 8) : (2 + Math.random() * 3),
+                speed: .3 + Math.random() * 1.5,
+                color: heart ? `rgba(255,0,80,${0.5 + Math.random() * 0.5})` : `rgba(255,215,200,${0.5 + Math.random() * 0.5})`,
+                heart
+            }
+        }
+        for (let i = 0; i < 100; i++)particles.push(createParticle());
+        function drawHeart(x, y, size, color) {
+            ctx.save(); ctx.translate(x, y); ctx.beginPath();
+            ctx.moveTo(0, size / 4);
+            ctx.bezierCurveTo(size / 2, -size / 2, size * 1.5, size / 3, 0, size);
+            ctx.bezierCurveTo(-size * 1.5, size / 3, -size / 2, -size / 2, 0, size / 4);
+            ctx.fillStyle = color; ctx.fill(); ctx.restore();
+        }
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => {
+                if (p.heart) drawHeart(p.x, p.y, p.size, p.color);
+                else { ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.fill(); }
+                p.y += p.speed; if (p.y > h + 10) { p.y = -10; p.x = Math.random() * w; }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        unmuteBtn.addEventListener("click", () => {
+            audio1.muted = false; audio2.muted = false; audio1.play();
+            unmuteBtn.style.display = "none";
+        });
+        window.addEventListener("load", () => { audio1.muted = true; audio1.play().catch(() => { }); });
+
+        function fadeOut(audio, time = 2000) {
+            let step = 50, steps = time / step, volStep = audio.volume / steps;
+            let iv = setInterval(() => {
+                audio.volume = Math.max(0, audio.volume - volStep);
+                if (audio.volume <= 0.02) { audio.pause(); audio.volume = 1; clearInterval(iv); }
+            }, step);
+        }
+
+        function typeBirthdayMessage() {
+            const text =  "Happy Birthday🎂 Shanaa ☺️🫀 Ya Husna😘 — you are my light🔥 My Omri🤗. Janam din mubark 🥳🎉  to someone who is more than just a friend🙈🫂 you are a sister ❤👯‍♀ a partner in crime 🤣🕵‍♀( khair Mai crime krtiii nhii hon am so sahreef u know 😂😎🙈) and a constant source of laughter 😂 ( hasaa b bss apka niklta h pyara wala 😂😘😉).. You're a shining star ⭐ that brightens up my life 🌹 and I'm so grateful ✨♥ to have you by my side 🤗  — From Sairu";
+            const container = document.getElementById("birthdayText");
+            container.innerHTML = '';
+            const words = text.split(' ');
+            words.forEach((word, i) => {
+                const span = document.createElement('span');
+                span.className = 'word';
+                span.textContent = word;
+                container.appendChild(span);
+                container.appendChild(document.createTextNode(' '));
+                setTimeout(() => span.classList.add('show'), i * 200);
+            });
+        }
+
+        function renderPoemLines(lines) {
+            poemCard.innerHTML = '';
+            let delay = 0;
+            lines.forEach(txt => {
+                const p = document.createElement('p');
+                p.className = 'poem-line';
+                p.textContent = txt;
+                poemCard.appendChild(p);
+                setTimeout(() => { p.style.opacity = 1; p.style.transform = 'translateY(0)'; }, delay);
+                delay += 3500;
+            });
+        }
+
+        const POEM_LINES = [
+            "I love you💓💐 more than I can show,",
+            "I miss you more than you know☺️🥺🫀.",
+            "I care💌💐 about you deeply every day,",
+            "More than words🗣🙈 could ever say.",
+            "No matter what comes our way,",
+            "Our love will always stay (Ameeen 🤲🌹).",
+            "You mean the world to me — forever true🫀👩‍❤️‍👩."
+        ];
+
+        startBtn.addEventListener("click", () => {
+            hideScene(sceneIntro); showScene(sceneBirthday);
+            typeBirthdayMessage();
+
+            setTimeout(() => {
+                fadeOut(audio1, 1000);
+                setTimeout(() => audio2.play(), 1000);
+                hideScene(sceneBirthday);
+                bg1.style.opacity = 0; bg2.style.opacity = 1;
+                showScene(scenePoem);
+                renderPoemLines(POEM_LINES);
+
+                setTimeout(() => {
+                    hideScene(scenePoem);
+                    showScene(sceneEnd);
+                }, 60000);
+            }, 30000);
+        });
+
+        downloadBtn.addEventListener("click", e => {
+            e.preventDefault();
+            hideScene(sceneEnd);
+            bg2.style.opacity = 0; bg1.style.opacity = 1;
+            showScene(sceneIntro);
+            audio2.pause();
+            audio1.currentTime = 23; audio1.play();
+        });
+
+        function showScene(s) { s.classList.add("show") }
+        function hideScene(s) { s.classList.remove("show") }
+    </script>
+</body>
+
+</html>
